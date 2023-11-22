@@ -1,14 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { PlayingState, createSpeechEngine } from "./speech";
 
 const useSpeech = (sentences: Array<string>) => {
-  const [activeIdx, setActiveIdx] = useState(-1);
+  const [activeSentenceIdx, setActiveSentenceIdx] = useState(-1);
   const [currentWord, setCurrentWord] = useState("");
   const [audioState, setAudioState] = useState<PlayingState>("initialized");
-
-  // since speech instance created once, as a hack we use ref here to get an actual last sentence index
-  // for more complex cases we have to re-create speech engine with actual config each time when we got new sentences
-  const lastSentenceIdx = useRef(sentences.length - 1);
 
   // define inside useState to get a stable instance of speech engine between re-renders
   const [speechEngine] = useState(() =>
@@ -20,16 +16,14 @@ const useSpeech = (sentences: Array<string>) => {
         const word = txt.slice(idx, idx + wordLength);
         setCurrentWord(word);
       },
-      onEnd: () => {
-        setActiveIdx((prevIdx) => {
-          const nextIdx = prevIdx + 1;
-          if (nextIdx > lastSentenceIdx.current) return -1;
-          return nextIdx;
-        });
-      },
+      onEnd: () => setActiveSentenceIdx((prevIdx) => prevIdx + 1),
       onStateUpdate: setAudioState,
     })
   );
+
+  const currentSentence = sentences[activeSentenceIdx];
+  const lastSentenceIdxNew = sentences.length - 1;
+  const reachedToEnd = activeSentenceIdx > lastSentenceIdxNew;
 
   /*
   Implement a custom useSpeech hook that uses a speech engine defined in 'speech.ts'
@@ -40,33 +34,35 @@ const useSpeech = (sentences: Array<string>) => {
   */
 
   useEffect(() => {
-    if (sentences.length === 0) return;
-
-    lastSentenceIdx.current = sentences.length - 1;
-
-    if (activeIdx > 0) {
-      speechEngine.load(sentences[activeIdx]);
+    if (activeSentenceIdx >= -1 && currentSentence) {
+      speechEngine.load(currentSentence);
       speechEngine.play();
     }
-  }, [sentences, activeIdx]);
+  }, [currentSentence, activeSentenceIdx]);
+
+  useEffect(() => {
+    if (reachedToEnd) {
+      setActiveSentenceIdx(-1);
+    }
+  }, [reachedToEnd]);
 
   return {
     currentWord,
-    currentSentence: sentences[activeIdx],
+    currentSentence,
     controls: {
       ...speechEngine,
       // Override default methods for adding some extra logic
       play: () => {
         //  Init sequence
-        if (activeIdx === -1) {
-          setActiveIdx(0);
-          speechEngine.load(sentences[0]);
+        if (activeSentenceIdx === -1) {
+          setActiveSentenceIdx(0);
+        } else {
+          speechEngine.play();
         }
-        speechEngine.play();
       },
       cancel: () => {
         speechEngine.cancel();
-        setActiveIdx(-1);
+        setActiveSentenceIdx(-1);
         setCurrentWord("");
       },
     },
