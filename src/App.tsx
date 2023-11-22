@@ -21,7 +21,11 @@ function App() {
     <div className="App">
       <h1>Text to speech</h1>
       <div>
-        <CurrentlyReading word={currentWord} sentence={currentSentence} />
+        <CurrentlyReading
+          word={currentWord}
+          sentence={currentSentence}
+          sentences={sentences}
+        />
       </div>
       <div>
         <Controls play={controls.play} cancel={controls.cancel} />
