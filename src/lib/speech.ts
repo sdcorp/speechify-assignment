@@ -27,7 +27,7 @@ const createSpeechEngine = (options: SpeechEngineOptions) => {
     utterance: null,
     config: {
       rate: 1,
-      volume: 1,
+      volume: 0.1,
       voice: window.speechSynthesis.getVoices()[0],
     },
   };
@@ -47,7 +47,6 @@ const createSpeechEngine = (options: SpeechEngineOptions) => {
       options.onStateUpdate("ended");
       options.onEnd(e);
     };
-
     // set it up as active utterance
     state.utterance = utterance;
   };
