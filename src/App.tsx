@@ -8,14 +8,16 @@ import { useSpeech } from "./lib/useSpeech";
 
 function App() {
   const [sentences, setSentences] = useState<Array<string>>([]);
-  const { currentWord, currentSentence, controls } = useSpeech(sentences);
+  const [counter, setCounter] = useState(-1);
+  const { currentWord, currentSentence, controls, audioState } =
+    useSpeech(sentences);
 
   useEffect(() => {
-    fetchContent().then((str) => {
-      const parsed = parseContentIntoSentences(str);
-      setSentences(parsed);
+    fetchContent().then((content) => {
+      const parsedSentences = parseContentIntoSentences(content);
+      setSentences(parsedSentences);
     });
-  }, []);
+  }, [counter]);
 
   return (
     <div className="App">
@@ -27,8 +29,14 @@ function App() {
           sentences={sentences}
         />
       </div>
+      <hr />
+      <br />
       <div>
-        <Controls play={controls.play} cancel={controls.cancel} />
+        <Controls
+          refetch={() => setCounter((c) => c + 1)}
+          controls={controls}
+          audioState={audioState}
+        />
       </div>
     </div>
   );

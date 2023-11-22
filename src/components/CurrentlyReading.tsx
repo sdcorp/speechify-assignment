@@ -12,16 +12,27 @@ export const CurrentlyReading = ({
 }: CurrentlyReadingProps) => {
   return (
     <div className="currently-reading">
-      <h2>{word}</h2>
       <br />
       <p>
-        {sentence.split("").map((w, idx) => {
-          return <span key={idx}>{w}</span>;
+        Current sentence:{" "}
+        {sentence?.split(" ").map((w, idx) => {
+          const highlighted = w === word;
+          return (
+            <span
+              key={idx}
+              style={{
+                color: highlighted ? "red" : "black",
+                fontWeight: highlighted ? "bolder" : "normal",
+              }}
+            >
+              {w}{" "}
+            </span>
+          );
         })}
       </p>
       <br />
       <br />
-      <p>Full text: {sentences.join("")} </p>
+      <p>Full sentence: {sentences.join(" ")} </p>
       <br />
       <br />
     </div>

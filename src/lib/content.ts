@@ -14,18 +14,10 @@ const fetchContent = async () => {
  * Avoid using DOMParser for implementing this function.
  */
 const parseContentIntoSentences = (content: string) => {
-  let truncedByStartTag = content
-    .split(">")
-    .filter((str) => !str.startsWith("<"))
-    .filter(Boolean);
-
-  let output = truncedByStartTag.map((strWithEndTag) => {
-    let splt = strWithEndTag.split("<");
-    let res = splt.filter((s) => !s.startsWith("/")).join("");
-    return res;
-  });
-
-  return output;
+  // extract substring from string that matches pattern: <s></s>
+  return (
+    content.match(/<s>(.*?)<\/s>/g)?.map((s) => s.replace(/<\/?s>/g, "")) ?? []
+  );
 };
 
 export { fetchContent, parseContentIntoSentences };

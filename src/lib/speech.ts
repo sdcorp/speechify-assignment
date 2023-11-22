@@ -17,6 +17,12 @@ export type SpeechEngineState = {
 
 export type SpeechEngine = ReturnType<typeof createSpeechEngine>;
 
+const getPrefferedVoice = () => {
+  const allVoices = window.speechSynthesis.getVoices();
+  const engVoices = allVoices.filter((v) => v.lang === "en-US");
+  return engVoices.length > 0 ? engVoices[0] : allVoices[0];
+};
+
 /**
  * This speech engine is meant to be a simple adapter for using speech synthesis api.
  * This should generally be left for the candidate to use as the speech synthesis apis have a few nuances
@@ -28,12 +34,12 @@ const createSpeechEngine = (options: SpeechEngineOptions) => {
     config: {
       rate: 1,
       volume: 0.1,
-      voice: window.speechSynthesis.getVoices()[0],
+      voice: getPrefferedVoice(),
     },
   };
 
   window.speechSynthesis.onvoiceschanged = (e) => {
-    state.config.voice = speechSynthesis.getVoices()[0];
+    state.config.voice = getPrefferedVoice() ?? speechSynthesis.getVoices()[0];
   };
 
   const load = (text: string) => {
