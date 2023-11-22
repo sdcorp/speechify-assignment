@@ -1,9 +1,23 @@
+import { MOCK_CONTENT } from "./mock";
+
 const API_URL = "http://localhost:5174/content";
+
+const sleep = (ms = 1000) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const getRandomElement = <T>(arr: Array<T>): T =>
+  arr[(Math.random() * arr.length) | 0];
 
 /**
  * Fetch the content from the api
  */
 const fetchContent = async () => {
+  // simulate server on Vercel
+  if (import.meta.env.VERCEL_URL) {
+    await sleep(500);
+    const content = getRandomElement(MOCK_CONTENT);
+    return content;
+  }
+
   const response = await fetch(API_URL);
   const data = await response.json();
   return data?.content;

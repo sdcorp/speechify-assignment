@@ -13,10 +13,12 @@ function App() {
     useSpeech(sentences);
 
   useEffect(() => {
-    fetchContent().then((content) => {
-      const parsedSentences = parseContentIntoSentences(content);
-      setSentences(parsedSentences);
-    });
+    fetchContent()
+      .then((content) => {
+        const parsedSentences = parseContentIntoSentences(content);
+        setSentences(parsedSentences);
+      })
+      .catch(console.error);
   }, [counter]);
 
   return (
