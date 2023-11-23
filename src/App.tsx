@@ -40,6 +40,16 @@ function App() {
           audioState={audioState}
         />
       </div>
+      <br />
+      <hr />
+      <br />
+      <a
+        href="https://github.com/sdcorp/speechify-assignment/tree/v2"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Source (Github)
+      </a>
     </div>
   );
 }
