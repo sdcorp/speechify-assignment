@@ -33,7 +33,7 @@ const createSpeechEngine = (options: SpeechEngineOptions) => {
     utterance: null,
     config: {
       rate: 1,
-      volume: 0.1,
+      volume: 0.5,
       voice: getPrefferedVoice(),
     },
   };
