@@ -11,11 +11,10 @@ const getRandomElement = <T>(arr: Array<T>): T =>
  * Fetch the content from the api
  */
 const fetchContent = async () => {
-  // simulate server on Vercel
-  if (import.meta.env.VERCEL_URL) {
+  if (import.meta.env.VITE_VERCEL_URL) {
     await sleep(500);
-    const content = getRandomElement(MOCK_CONTENT);
-    return content;
+    const data = getRandomElement(MOCK_CONTENT);
+    return data?.content;
   }
 
   const response = await fetch(API_URL);
