@@ -29,7 +29,11 @@ const fetchContent = async () => {
 const parseContentIntoSentences = (content: string) => {
   // extract substring from string that matches pattern: <s></s>
   return (
-    content.match(/<s>(.*?)<\/s>/g)?.map((s) => s.replace(/<\/?s>/g, "")) ?? []
+    content
+      .match(/<s>(.*?)<\/s>/g)
+      ?.map((s) =>
+        s.replace(/<\/?s>/g, "").concat(s.includes(".") ? "" : ".")
+      ) ?? []
   );
 };
 
