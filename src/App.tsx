@@ -1,21 +1,55 @@
-import './App.css';
+import { useEffect, useState } from "react";
+import "./App.css";
 
-import { Controls } from './components/Controls';
-import { CurrentlyReading } from './components/CurrentlyReading';
+import { Controls } from "./components/Controls";
+import { CurrentlyReading } from "./components/CurrentlyReading";
+import { fetchContent, parseContentIntoSentences } from "./lib/content";
+import { useSpeech } from "./lib/useSpeech";
 
 function App() {
-  // const [sentences, setSentences] = useState<Array<string>>([]);
-  // const { currentWord, currentSentence, controls } = useSpeech(sentences);
+  const [sentences, setSentences] = useState<Array<string>>([]);
+  const [counter, setCounter] = useState(-1);
+  const { currentWord, currentSentence, controls, audioState } =
+    useSpeech(sentences);
+
+  useEffect(() => {
+    fetchContent()
+      .then((content) => {
+        const parsedSentences = parseContentIntoSentences(content);
+        setSentences(parsedSentences);
+      })
+      .catch(console.error);
+  }, [counter]);
 
   return (
     <div className="App">
       <h1>Text to speech</h1>
       <div>
-        <CurrentlyReading/>
+        <CurrentlyReading
+          word={currentWord}
+          sentence={currentSentence}
+          sentences={sentences}
+        />
       </div>
+      <hr />
+      <br />
       <div>
-        <Controls/>
+        <Controls
+          refetch={() => setCounter((c) => c + 1)}
+          controls={controls}
+          audioState={audioState}
+        />
       </div>
+      <br />
+      <hr />
+      <br />
+      <a
+        href="https://github.com/sdcorp/speechify-assignment/tree/v2"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Source (Github)
+      </a>
     </div>
   );
 }
